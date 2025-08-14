@@ -1,12 +1,23 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Nunito, Lilita_One } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/header";
 import { NextAuthProvider } from "@/components/next-auth-provider";
 import Footer from "@/components/Footer";
 import Pattern from "@/components/Pattern";
 
-const inter = Inter({ subsets: ["latin"] });
+const nunito = Nunito({ 
+  subsets: ["latin"],
+  display: 'swap',
+  preload: true,
+});
+
+const lilitaOne = Lilita_One({ 
+  weight: "400",
+  subsets: ["latin"],
+  display: 'swap',
+  preload: true,
+});
 
 export const metadata: Metadata = {
   title: "Just Choose Already - Restaurant Decision Wheel",
@@ -14,6 +25,9 @@ export const metadata: Metadata = {
     "Can't decide where to eat? Let our magical wheel choose the perfect restaurant for you!",
   icons: {
     icon: "/favicon.png",
+  },
+  other: {
+    'google-fonts': 'https://fonts.googleapis.com',
   },
 };
 
@@ -24,8 +38,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-
-      <body className={inter.className + " bg-[#ffecc7]"}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
+      <body className={`${nunito.className} ${lilitaOne.className} bg-[#ffecc7]`}>
         {/* Background Pattern - SVG pattern embedded as CSS */}
         <Pattern screen="fixed" />
         {/* Main Content Container - appears above background */}
