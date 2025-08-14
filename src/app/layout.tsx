@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   title: "Just Choose Already - Restaurant Decision Wheel",
   description:
     "Can't decide where to eat? Let our magical wheel choose the perfect restaurant for you!",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
