@@ -59,22 +59,22 @@ export function FiltersPanel() {
         timeoutId = setTimeout(async () => {
           if (locationText.trim().length > 2) {
             try {
-              const response = await fetch('/api/geocode', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ locationText, type: 'autocomplete' }),
+              const response = await fetch("/api/geocode", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ locationText, type: "autocomplete" }),
               });
-              
+
               if (response.ok) {
                 const data = await response.json();
-                if (data.type === 'autocomplete') {
+                if (data.type === "autocomplete") {
                   setSuggestions(data.suggestions);
                   setShowSuggestions(true);
                   setSelectedSuggestionIndex(-1);
                 }
               }
             } catch (error) {
-              console.error('Autocomplete failed:', error);
+              console.error("Autocomplete failed:", error);
             }
           } else {
             setSuggestions([]);
@@ -91,10 +91,10 @@ export function FiltersPanel() {
     setFilters({ locationText });
     setShowSuggestions(false);
     setSuggestions([]);
-    
+
     // Clear previous coordinates when text changes
     setFilters({ lat: undefined, lng: undefined });
-    
+
     // Get autocomplete suggestions
     debouncedAutocomplete(locationText);
   };
@@ -104,19 +104,22 @@ export function FiltersPanel() {
     setFilters({ locationText: suggestion.description });
     setShowSuggestions(false);
     setSuggestions([]);
-    
+
     // Get exact coordinates for the selected suggestion
     try {
       setIsGeocoding(true);
-      const response = await fetch('/api/geocode', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ locationText: suggestion.description, type: 'geocode' }),
+      const response = await fetch("/api/geocode", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          locationText: suggestion.description,
+          type: "geocode",
+        }),
       });
-      
+
       if (response.ok) {
         const data = await response.json();
-        if (data.type === 'geocode') {
+        if (data.type === "geocode") {
           setFilters({
             locationText: data.formattedAddress || suggestion.description,
             lat: data.lat,
@@ -125,7 +128,7 @@ export function FiltersPanel() {
         }
       }
     } catch (error) {
-      console.error('Geocoding failed:', error);
+      console.error("Geocoding failed:", error);
     } finally {
       setIsGeocoding(false);
     }
@@ -136,23 +139,25 @@ export function FiltersPanel() {
     if (!showSuggestions || suggestions.length === 0) return;
 
     switch (e.key) {
-      case 'ArrowDown':
+      case "ArrowDown":
         e.preventDefault();
-        setSelectedSuggestionIndex((prev: number) => 
+        setSelectedSuggestionIndex((prev: number) =>
           prev < suggestions.length - 1 ? prev + 1 : prev
         );
         break;
-      case 'ArrowUp':
+      case "ArrowUp":
         e.preventDefault();
-        setSelectedSuggestionIndex((prev: number) => prev > 0 ? prev - 1 : -1);
+        setSelectedSuggestionIndex((prev: number) =>
+          prev > 0 ? prev - 1 : -1
+        );
         break;
-      case 'Enter':
+      case "Enter":
         e.preventDefault();
         if (selectedSuggestionIndex >= 0) {
           handleSuggestionSelect(suggestions[selectedSuggestionIndex]);
         }
         break;
-      case 'Escape':
+      case "Escape":
         setShowSuggestions(false);
         setSelectedSuggestionIndex(-1);
         break;
@@ -161,7 +166,10 @@ export function FiltersPanel() {
 
   // Close suggestions when clicking outside
   const handleClickOutside = (e: MouseEvent) => {
-    if (suggestionsRef.current && !suggestionsRef.current.contains(e.target as Node)) {
+    if (
+      suggestionsRef.current &&
+      !suggestionsRef.current.contains(e.target as Node)
+    ) {
       setShowSuggestions(false);
       setSelectedSuggestionIndex(-1);
     }
@@ -170,8 +178,8 @@ export function FiltersPanel() {
   // Add click outside listener
   useEffect(() => {
     const listener = (e: MouseEvent) => handleClickOutside(e);
-    document.addEventListener('mousedown', listener);
-    return () => document.removeEventListener('mousedown', listener);
+    document.addEventListener("mousedown", listener);
+    return () => document.removeEventListener("mousedown", listener);
   }, []);
 
   const handleSearch = async () => {
@@ -188,10 +196,13 @@ export function FiltersPanel() {
         ...filters,
         cuisine: filters.cuisine || "any",
         price: filters.price === 0 ? undefined : filters.price,
-        priceRanges: filters.priceRanges && filters.priceRanges.length > 0 ? filters.priceRanges : undefined,
+        priceRanges:
+          filters.priceRanges && filters.priceRanges.length > 0
+            ? filters.priceRanges
+            : undefined,
       };
-      
-      console.log('Sending search query:', cleanQuery)
+
+      console.log("Sending search query:", cleanQuery);
 
       const response = await fetch("/api/search", {
         method: "POST",
@@ -249,43 +260,52 @@ export function FiltersPanel() {
               ref={inputRef}
               placeholder="Enter city, address, or landmark"
               value={filters.locationText}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleLocationChange(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleLocationChange(e.target.value)
+              }
               onKeyDown={handleKeyDown}
               onFocus={() => {
                 if (suggestions.length > 0) setShowSuggestions(true);
               }}
               className="pl-8 pr-3"
             />
-            
+
             {/* Autocomplete Suggestions */}
             {showSuggestions && suggestions.length > 0 && (
-              <div 
+              <div
                 ref={suggestionsRef}
                 className="absolute z-50 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto"
               >
-                {suggestions.map((suggestion: LocationSuggestion, index: number) => (
-                  <div
-                    key={suggestion.placeId}
-                    className={`px-3 py-2 cursor-pointer hover:bg-gray-100 ${
-                      index === selectedSuggestionIndex ? 'bg-gray-100' : ''
-                    }`}
-                    onClick={() => handleSuggestionSelect(suggestion)}
-                  >
-                    <div className="text-sm text-gray-800">{suggestion.description}</div>
-                    <div className="text-xs text-gray-500 capitalize">
-                      {suggestion.types[0]?.replace(/_/g, ' ')}
+                {suggestions.map(
+                  (suggestion: LocationSuggestion, index: number) => (
+                    <div
+                      key={suggestion.placeId}
+                      className={`px-3 py-2 cursor-pointer hover:bg-gray-100 ${
+                        index === selectedSuggestionIndex ? "bg-gray-100" : ""
+                      }`}
+                      onClick={() => handleSuggestionSelect(suggestion)}
+                    >
+                      <div className="text-sm text-gray-800">
+                        {suggestion.description}
+                      </div>
+                      <div className="text-xs text-gray-500 capitalize">
+                        {suggestion.types[0]?.replace(/_/g, " ")}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                )}
               </div>
             )}
-            
+
             {isGeocoding && (
-              <div className="text-xs text-gray-500 text-center">
-                🔍 Finding location...
+              <div className="text-xs text-[#ef4e2d] text-center">
+                <div className="flex items-center justify-center gap-1">
+                  <FaSearch color="#ef4e2d" size={12} />
+                  <span>Finding location...</span>
+                </div>
               </div>
             )}
-            
+
             <Button
               variant="outline"
               size="sm"
@@ -309,12 +329,21 @@ export function FiltersPanel() {
             }
           >
             <SelectTrigger className="font-nunito tracking-wider">
-              <SelectValue placeholder="Any cuisine" className="font-nunito tracking-wider" />
+              <SelectValue
+                placeholder="Any cuisine"
+                className="font-nunito tracking-wider"
+              />
             </SelectTrigger>
             <SelectContent className="font-nunito tracking-wider">
-              <SelectItem value="any" className="font-nunito tracking-wider">Any cuisine</SelectItem>
+              <SelectItem value="any" className="font-nunito tracking-wider">
+                Any cuisine
+              </SelectItem>
               {CUISINES.map((cuisine) => (
-                <SelectItem key={cuisine} value={cuisine.toLowerCase()} className="font-nunito tracking-wider">
+                <SelectItem
+                  key={cuisine}
+                  value={cuisine.toLowerCase()}
+                  className="font-nunito tracking-wider"
+                >
                   {cuisine}
                 </SelectItem>
               ))}
@@ -329,24 +358,31 @@ export function FiltersPanel() {
           </label>
           <div className="space-y-2 font-nunito tracking-wider">
             {[
-              { value: 1, label: '$', description: 'Under $10' },
-              { value: 2, label: '$$', description: '$11-$30' },
-              { value: 3, label: '$$$', description: '$31-$60' },
-              { value: 4, label: '$$$$', description: 'Over $60' }
+              { value: 1, label: "$", description: "Under $10" },
+              { value: 2, label: "$$", description: "$11-$30" },
+              { value: 3, label: "$$$", description: "$31-$60" },
+              { value: 4, label: "$$$$", description: "Over $60" },
             ].map((priceOption) => (
-              <label key={priceOption.value} className="flex items-center space-x-3 cursor-pointer">
+              <label
+                key={priceOption.value}
+                className="flex items-center space-x-3 cursor-pointer"
+              >
                 <input
                   type="checkbox"
-                  checked={filters.priceRanges?.includes(priceOption.value) || false}
+                  checked={
+                    filters.priceRanges?.includes(priceOption.value) || false
+                  }
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     const currentRanges = filters.priceRanges || [];
                     if (e.target.checked) {
-                      setFilters({ 
-                        priceRanges: [...currentRanges, priceOption.value] 
+                      setFilters({
+                        priceRanges: [...currentRanges, priceOption.value],
                       });
                     } else {
-                      setFilters({ 
-                        priceRanges: currentRanges.filter((p: number) => p !== priceOption.value) 
+                      setFilters({
+                        priceRanges: currentRanges.filter(
+                          (p: number) => p !== priceOption.value
+                        ),
                       });
                     }
                   }}
@@ -397,7 +433,8 @@ export function FiltersPanel() {
         >
           {isSearching ? (
             <span className="flex items-center justify-center gap-2">
-              <FaSearch className="w-[4rem] h-[4rem] animate-spin" /> Searching...
+              <FaSearch className="w-[4rem] h-[4rem] animate-spin" />{" "}
+              Searching...
             </span>
           ) : (
             <span className="flex items-center justify-center gap-2">
@@ -417,11 +454,13 @@ export function FiltersPanel() {
         {(filters.cuisine && filters.cuisine !== "any") ||
         (filters.priceRanges && filters.priceRanges.length > 0) ? (
           <p className="text-sm text-gray-600 text-center p-3 bg-gray-50 rounded-lg">
-            {filters.cuisine !== "any" ? filters.cuisine : "Any"}{" "}
-            within {filters.radiusMiles} miles
-            {filters.priceRanges && filters.priceRanges.length > 0 && (
-              ` • ${filters.priceRanges.map((p: number) => "$".repeat(p)).join(" + ")}`
-            )}
+            {filters.cuisine !== "any" ? filters.cuisine : "Any"} within{" "}
+            {filters.radiusMiles} miles
+            {filters.priceRanges &&
+              filters.priceRanges.length > 0 &&
+              ` • ${filters.priceRanges
+                .map((p: number) => "$".repeat(p))
+                .join(" + ")}`}
           </p>
         ) : null}
       </div>

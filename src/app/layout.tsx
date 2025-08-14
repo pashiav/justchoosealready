@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Nunito, Lilita_One } from "next/font/google";
+import { Nunito, Lilita_One, League_Spartan } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/header";
 import { NextAuthProvider } from "@/components/next-auth-provider";
@@ -14,6 +14,12 @@ const nunito = Nunito({
 
 const lilitaOne = Lilita_One({ 
   weight: "400",
+  subsets: ["latin"],
+  display: 'swap',
+  preload: true,
+});
+
+const leagueSpartan = League_Spartan({ 
   subsets: ["latin"],
   display: 'swap',
   preload: true,
@@ -42,7 +48,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-      <body className={`${nunito.className} ${lilitaOne.className} bg-[#ffecc7]`}>
+      <body className={`${nunito.className} ${lilitaOne.className} ${leagueSpartan.className} bg-[#ffecc7]`}>
         {/* Background Pattern - SVG pattern embedded as CSS */}
         <Pattern screen="fixed" />
         {/* Main Content Container - appears above background */}
