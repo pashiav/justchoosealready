@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import Pattern from "@/components/Pattern";
 import {
   FaHeart,
-  FaSpinner,
   FaPizzaSlice,
   FaBullseye,
   FaUser,

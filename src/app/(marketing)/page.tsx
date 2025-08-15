@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { BiConfused } from "react-icons/bi";
 import { FaClock, FaVideo } from "react-icons/fa6";
 import { LuFerrisWheel } from "react-icons/lu";
-import { MdPhoneAndroid, MdStars, MdQuestionMark } from "react-icons/md";
+import { MdPhoneAndroid, MdStars } from "react-icons/md";
 import { BsArrowsMove } from "react-icons/bs";
 import { GiSpiderMask } from "react-icons/gi";
 

@@ -61,7 +61,7 @@ function AuthErrorContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center">
-      <div className="max-w-md mx-auto p-8 bg-white rounded-2xl shadow-lg">
+      <div className="max-w-md mx-auto p-8 bg-white rounded-2xl   lg">
         <div className="text-center mb-6">
           <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
             <span className="text-2xl">⚠️</span>
@@ -118,7 +118,7 @@ export default function AuthErrorPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center">
-        <div className="max-w-md mx-auto p-8 bg-white rounded-2xl shadow-lg">
+        <div className="max-w-md mx-auto p-8 bg-white rounded-2xl   lg">
           <div className="text-center">
             <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
               <span className="text-2xl">⏳</span>

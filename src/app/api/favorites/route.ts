@@ -79,14 +79,14 @@ export async function POST(request: NextRequest) {
       });
       
       snapshot = {
-        place_id: placeDetails.place_id,
-        name: placeDetails.name,
-        formatted_address: placeDetails.formatted_address,
-        rating: placeDetails.rating,
-        user_ratings_total: placeDetails.user_ratings_total,
-        price_level: placeDetails.price_level,
-        website: placeDetails.website,
-        opening_hours: placeDetails.opening_hours?.open_now,
+        place_id: placeDetails.place_id as string,
+        name: placeDetails.name as string,
+        formatted_address: placeDetails.formatted_address as string,
+        rating: placeDetails.rating as number | undefined,
+        user_ratings_total: placeDetails.user_ratings_total as number | undefined,
+        price_level: placeDetails.price_level as number | undefined,
+        website: placeDetails.website as string | undefined,
+        opening_hours: (placeDetails.opening_hours as { open_now?: boolean })?.open_now,
         source: 'Google Places API'
       };
     }

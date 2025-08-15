@@ -3,10 +3,8 @@
 import { Wheel } from '@/components/wheel'
 import { FiltersPanel } from '@/components/filters-panel'
 import { OptionList } from '@/components/option-list'
-import { useWheelStore } from '@/lib/store'
 
 export default function SpinPage() {
-  const { winner } = useWheelStore()
 
   return (
     <div className="min-h-screen">

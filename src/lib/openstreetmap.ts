@@ -150,7 +150,13 @@ export async function searchNearbyWithOpenStreetMap(
     if (data.elements) {
       console.log(`🏪 Found ${data.elements.length} elements from Overpass API`)
       
-      data.elements.forEach((element: any, index: number) => {
+      data.elements.forEach((element: {
+        type: string;
+        id: number;
+        tags: Record<string, string>;
+        lat: number;
+        lon: number;
+      }, index: number) => {
         console.log(`📍 Element ${index + 1}:`, {
           type: element.type,
           id: element.id,

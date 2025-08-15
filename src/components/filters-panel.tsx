@@ -49,42 +49,39 @@ export function FiltersPanel() {
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   // Debounced autocomplete function
-  const debouncedAutocomplete = useCallback(
-    (() => {
-      let timeoutId: NodeJS.Timeout;
-      return (locationText: string) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(async () => {
-          if (locationText.trim().length > 2) {
-            try {
-              const response = await fetch("/api/geocode", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ locationText, type: "autocomplete" }),
-              });
+  const debouncedAutocomplete = useCallback((locationText: string) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = setTimeout(async () => {
+      if (locationText.trim().length > 2) {
+        try {
+          const response = await fetch("/api/geocode", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ locationText, type: "autocomplete" }),
+          });
 
-              if (response.ok) {
-                const data = await response.json();
-                if (data.type === "autocomplete") {
-                  setSuggestions(data.suggestions);
-                  setShowSuggestions(true);
-                  setSelectedSuggestionIndex(-1);
-                }
-              }
-            } catch (error) {
-              console.error("Autocomplete failed:", error);
+          if (response.ok) {
+            const data = await response.json();
+            if (data.type === "autocomplete") {
+              setSuggestions(data.suggestions);
+              setShowSuggestions(true);
+              setSelectedSuggestionIndex(-1);
             }
-          } else {
-            setSuggestions([]);
-            setShowSuggestions(false);
           }
-        }, 300); // Reduced to 300ms for better UX
-      };
-    })(),
-    []
-  );
+        } catch (error) {
+          console.error("Autocomplete failed:", error);
+        }
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    }, 300); // Reduced to 300ms for better UX
+  }, []);
 
   // Handle location input changes
   const handleLocationChange = (locationText: string) => {

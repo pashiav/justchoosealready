@@ -23,7 +23,6 @@ export type SearchQuery = {
   priceRanges?: number[]
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function searchPlaces(query: SearchQuery): Promise<PlaceOption[]> {
   try {
     let location = { lat: query.lat, lng: query.lng }
@@ -84,10 +83,10 @@ export async function searchPlaces(query: SearchQuery): Promise<PlaceOption[]> {
     const radiusMeters = Math.min(query.radiusMiles * 1609.34, 40000)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const searchParams: Record<string, any> = {
-      location: location,
+    const searchParams: any = {
+      location: { lat: location.lat!, lng: location.lng! },
       radius: radiusMeters,
-      type: "restaurant",
+      type: "restaurant" as const,
       key: process.env.GOOGLE_MAPS_API_KEY!,
     }
 
@@ -107,10 +106,8 @@ export async function searchPlaces(query: SearchQuery): Promise<PlaceOption[]> {
       searchParams.maxprice = query.price - 1
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await client.placesNearby({
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      params: searchParams as any,
+      params: searchParams,
     })
 
     return result.data.results.map((place) => ({
@@ -128,8 +125,7 @@ export async function searchPlaces(query: SearchQuery): Promise<PlaceOption[]> {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function getPlaceDetails(placeId: string): Promise<Record<string, any>> {
+export async function getPlaceDetails(placeId: string): Promise<Record<string, unknown>> {
   try {
     const result = await client.placeDetails({
       params: {

@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase'
 // Simple admin check - you can enhance this with a proper admin role system
 const ADMIN_EMAILS = process.env.ADMIN_EMAILS?.split(',') || []
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions)
     

@@ -24,7 +24,7 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user }) {
       if (user.email) {
         try {
           // Check if user already exists
@@ -70,7 +70,7 @@ export const authOptions: NextAuthOptions = {
       }
       return true
     },
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id
       }
