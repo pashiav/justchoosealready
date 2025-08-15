@@ -312,7 +312,12 @@ export default function AccountPage() {
                             <div className="flex-1">
                               <a
                                 href={(() => {
-                                  // Build Google search URL with restaurant name and address
+                                  // For premium users with Google API access, use the place_id link
+                                  if (googleApiAccess && favorite.place_id) {
+                                    return `https://www.google.com/maps/place/?q=place_id:${favorite.place_id}`;
+                                  }
+                                  
+                                  // For non-premium users, build Google search URL with restaurant name and address
                                   const searchQuery = encodeURIComponent(
                                     `${favorite.snapshot.name} ${favorite.snapshot.formatted_address || ''}`.trim()
                                   )
@@ -409,7 +414,12 @@ export default function AccountPage() {
                             <div className="flex-1">
                               <a
                                 href={(() => {
-                                  // Build Google search URL with restaurant name and address
+                                  // For premium users with Google API access, use the place_id link
+                                  if (googleApiAccess && selectedPlace?.place_id) {
+                                    return `https://www.google.com/maps/place/?q=place_id:${selectedPlace.place_id}`;
+                                  }
+                                  
+                                  // For non-premium users, build Google search URL with restaurant name and address
                                   const searchQuery = encodeURIComponent(
                                     `${selectedPlace?.name || 'Unknown Place'} ${selectedPlace?.vicinity || ''}`.trim()
                                   )

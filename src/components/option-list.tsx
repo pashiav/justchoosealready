@@ -4,9 +4,35 @@ import { Button } from "@/components/ui/button";
 import { useWheelStore } from "@/lib/store";
 import { PlaceOption } from "@/lib/google";
 import { FaMapMarkerAlt, FaStar, FaInfoCircle } from "react-icons/fa";
+import { useSession } from "next-auth/react";
+import { useEffect, useState, useCallback } from "react";
 
 export function OptionList() {
   const { selectedOptions, removeOption } = useWheelStore();
+  const { data: session } = useSession();
+  const [hasGoogleAccess, setHasGoogleAccess] = useState(false);
+
+  // Check if user has Google API access (premium)
+  const checkGoogleAccess = useCallback(async () => {
+    if (!session) return;
+    
+    try {
+      const response = await fetch('/api/user/access');
+      if (response.ok) {
+        const data = await response.json();
+        setHasGoogleAccess(data.google_api_access || false);
+      }
+    } catch (error) {
+      console.error('Failed to check Google API access:', error);
+      setHasGoogleAccess(false);
+    }
+  }, [session]);
+
+  useEffect(() => {
+    if (session) {
+      checkGoogleAccess();
+    }
+  }, [session, checkGoogleAccess]);
 
   // Debug logging
   console.log('OptionList render - selectedOptions:', selectedOptions);
@@ -52,7 +78,12 @@ export function OptionList() {
               {/* First line: Restaurant name - clickable */}
               <a
                 href={(() => {
-                  // Build Google search URL with restaurant name and full address (prefer formatted_address over vicinity)
+                  // For premium users with Google API access, use the place_id link
+                  if (hasGoogleAccess && option.place_id) {
+                    return `https://www.google.com/maps/place/?q=place_id:${option.place_id}`;
+                  }
+                  
+                  // For non-premium users, build Google search URL with restaurant name and full address
                   let addressToUse = '';
                   if (option.formatted_address && option.formatted_address !== 'Address not available') {
                     addressToUse = option.formatted_address;
