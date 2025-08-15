@@ -10,9 +10,7 @@ export function Header() {
 
   return (
     <header className="font-lilita uppercase bg-transparent">
-      <>
-        <link rel="icon" href="/logo.png" />
-      </>
+
 
       <div className="container mx-auto px-4 pt-6 pb-2">
         <nav className="flex items-center gap-8 tracking-wider justify-end w-full text-sm">
@@ -21,12 +19,6 @@ export function Header() {
             className="text-[#2d2e40] hover:text-[#ef4e2d] transition-colors font-bold"
           >
             Spin The Wheel
-          </Link>
-          <Link
-            href="/how-it-works"
-            className="text-[#2d2e40] hover:text-[#ef4e2d] transition-colors font-bold"
-          >
-            How It Works
           </Link>
 
           {session ? (

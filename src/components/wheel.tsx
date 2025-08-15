@@ -27,6 +27,7 @@ export function Wheel() {
   const [seed, setSeed] = useState<string>("");
   const [isFavorite, setIsFavorite] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasGoogleAccess, setHasGoogleAccess] = useState(false);
   const svgRef = useRef<SVGSVGElement>(null);
   const { data: session } = useSession();
 
@@ -38,6 +39,28 @@ export function Wheel() {
       checkFavoriteStatus();
     }
   }, [winner, session]);
+
+  // Check if user has Google API access
+  useEffect(() => {
+    if (session) {
+      checkGoogleAccess();
+    }
+  }, [session]);
+
+  const checkGoogleAccess = async () => {
+    if (!session) return;
+    
+    try {
+      const response = await fetch('/api/user/access');
+      if (response.ok) {
+        const data = await response.json();
+        setHasGoogleAccess(data.google_api_access || false);
+      }
+    } catch (error) {
+      console.error('Failed to check Google API access:', error);
+      setHasGoogleAccess(false);
+    }
+  };
 
   const checkFavoriteStatus = async () => {
     if (!winner || !session) return;
@@ -83,7 +106,10 @@ export function Wheel() {
         const response = await fetch('/api/favorites', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ place_id: winner.place_id }),
+          body: JSON.stringify({ 
+            place_id: winner.place_id,
+            place_data: winner // Send the full place data
+          }),
         });
         console.log('Add response:', response.status);
         if (response.ok) {
@@ -373,7 +399,7 @@ export function Wheel() {
           className="fixed inset-0 flex items-center justify-center z-50 p-4"
           style={{ backgroundColor: "rgba(0, 0, 0, 0.3)" }}
         >
-          <div className="bg-[#d8bf9f] border-4 px-4 py-2 border-[#3d3d3d] rounded-2xl shadow-2xl max-w-xl w-full mx-4 relative animate-in fade-in duration-300 overflow-hidden">
+          <div className="bg-[#d8bf9f] border-4 px-4 py-2 border-[#3d3d3d] rounded-2xl   2xl max-w-xl w-full mx-4 relative animate-in fade-in duration-300 overflow-hidden">
             {/* Pattern background - always first, z-0 */}
             <Pattern
               screen="absolute"
@@ -402,10 +428,11 @@ export function Wheel() {
               >
                 {winner.name}
               </h2>
-              {winner.vicinity && (
+              {(winner.formatted_address || winner.vicinity) && 
+               (winner.formatted_address !== 'Address not available' && winner.vicinity !== 'Address not available') && (
                 <p className="text-sm mb-4 flex items-center justify-center gap-2 font-league-spartan font-bold text-[#3d3d3d]">
                   <FaMapMarkerAlt className="text-lg text-red-500" />
-                  {winner.vicinity}
+                  {winner.formatted_address || winner.vicinity}
                 </p>
               )}
 
@@ -427,12 +454,27 @@ export function Wheel() {
               {/* Action buttons */}
               <div className="space-y-3">
                 <Button
-                  onClick={() =>
-                    window.open(
-                      `https://www.google.com/maps/place/?q=place_id:${winner.place_id}`,
-                      "_blank"
-                    )
-                  }
+                  onClick={() => {
+                    if (hasGoogleAccess && !winner.place_id.startsWith('osm_')) {
+                      // For users with Google API access and Google Places results, use direct Google Maps link
+                      const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${winner.place_id}`;
+                      window.open(mapsUrl, "_blank");
+                    } else {
+                      // For OpenStreetMap results or users without Google access, use Google search
+                      let addressToUse = '';
+                      if (winner.formatted_address && winner.formatted_address !== 'Address not available') {
+                        addressToUse = winner.formatted_address;
+                      } else if (winner.vicinity && winner.vicinity !== 'Address not available') {
+                        addressToUse = winner.vicinity;
+                      }
+                      
+                      const searchQuery = encodeURIComponent(
+                        addressToUse ? `${winner.name} ${addressToUse}`.trim() : winner.name
+                      );
+                      const searchUrl = `https://www.google.com/search?q=${searchQuery}`;
+                      window.open(searchUrl, "_blank");
+                    }
+                  }}
                   className="w-full uppercase text-xl font-bold px-4 pb-5 pt-6 bg-[#ef4e2d] border-b-4 border-[#c83e22] font-league-spartan transition-all duration-200 rounded-2xl hover:bg-[#e03c24] hover:border-[#b32f1a] hover:cursor-pointer tracking-wide group"
                 >
                   <span className="flex items-center justify-center gap-4">

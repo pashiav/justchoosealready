@@ -218,7 +218,27 @@ export function FiltersPanel() {
       if (data.error) {
         setError(data.error);
       } else {
-        setSelectedOptions(data);
+        // Handle different API response structures
+        let options;
+        if (data.places) {
+          // OpenStreetMap response structure
+          options = data.places;
+          console.log('OpenStreetMap search results:', data);
+        } else if (Array.isArray(data)) {
+          // Google Maps response structure (direct array)
+          options = data;
+          console.log('Google Maps search results:', data);
+        } else {
+          // Fallback - try to extract options from any structure
+          options = data.results || data.options || [];
+          console.log('Unknown response structure, extracted options:', options);
+        }
+        
+        if (options && options.length > 0) {
+          setSelectedOptions(options);
+        } else {
+          setError('No restaurants found in this area');
+        }
       }
     } catch {
       setError("Failed to search. Please try again.");
@@ -274,7 +294,7 @@ export function FiltersPanel() {
             {showSuggestions && suggestions.length > 0 && (
               <div
                 ref={suggestionsRef}
-                className="absolute z-50 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+                className="absolute z-50 w-full bg-white border border-gray-300 rounded-lg   lg max-h-60 overflow-y-auto"
               >
                 {suggestions.map(
                   (suggestion: LocationSuggestion, index: number) => (

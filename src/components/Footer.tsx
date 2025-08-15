@@ -9,9 +9,8 @@ export default function Footer() {
           <Image src="/logo-colored.png" alt="Just Choose Already Logo" width={80} height={80} className="rounded-full" />
         </div>
         <div className="flex gap-6 text-sm uppercase tracking-wide">
-          <Link href="/how-it-works" className="hover:text-[#ef4e2d] transition-colors">How It Works</Link>
           <Link href="/spin" className="hover:text-[#ef4e2d] transition-colors">Spin</Link>
-          <a href="https://github.com/yourrepo" target="_blank" rel="noopener noreferrer" className="hover:text-[#ef4e2d] transition-colors">GitHub</a>
+          <a href="https://github.com/pashiav/justchoosealready" target="_blank" rel="noopener noreferrer" className="hover:text-[#ef4e2d] transition-colors">GitHub</a>
         </div>
         <div className="text-xs text-gray-500 text-center md:text-right">
           &copy; {new Date().getFullYear()} Just Choose Already. All rights reserved.
