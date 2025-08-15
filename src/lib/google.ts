@@ -11,6 +11,7 @@ export type PlaceOption = {
   vicinity?: string
   formatted_address?: string
   photo_ref?: string
+  business_status?: string
 }
 
 export type SearchQuery = {
@@ -118,7 +119,9 @@ export async function searchPlaces(query: SearchQuery): Promise<PlaceOption[]> {
       price_level: place.price_level,
       vicinity: place.vicinity,
       photo_ref: place.photos?.[0]?.photo_reference,
+      business_status: place.business_status,
     }))
+    .filter((place) => place.business_status !== 'PERMANENTLY_CLOSED')
   } catch (error) {
     console.error("Error searching places:", error)
     throw new Error("Failed to search places")
@@ -130,7 +133,7 @@ export async function getPlaceDetails(placeId: string): Promise<Record<string, u
     const result = await client.placeDetails({
       params: {
         place_id: placeId,
-        fields: ["name", "formatted_address", "website", "rating", "user_ratings_total", "price_level", "opening_hours", "geometry", "photos"],
+        fields: ["name", "formatted_address", "website", "rating", "user_ratings_total", "price_level", "opening_hours", "geometry", "photos", "business_status"],
         key: process.env.GOOGLE_MAPS_API_KEY!,
       },
     })
