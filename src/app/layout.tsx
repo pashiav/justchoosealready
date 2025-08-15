@@ -3,6 +3,7 @@ import { Nunito, Lilita_One, League_Spartan } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/header";
 import { NextAuthProvider } from "@/components/next-auth-provider";
+import { PostHogProvider } from "@/components/posthog-provider";
 import Footer from "@/components/Footer";
 import Pattern from "@/components/Pattern";
 
@@ -60,11 +61,13 @@ export default function RootLayout({
         <Pattern screen="fixed" />
         {/* Main Content Container - appears above background */}
         <div className="relative z-10">
-          <NextAuthProvider>
-            <Header />
-            {children}
-            <Footer />
-          </NextAuthProvider>
+          <PostHogProvider>
+            <NextAuthProvider>
+              <Header />
+              {children}
+              <Footer />
+            </NextAuthProvider>
+          </PostHogProvider>
         </div>
       </body>
     </html>
