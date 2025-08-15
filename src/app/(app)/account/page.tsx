@@ -14,6 +14,7 @@ import {
   FaRedo,
   FaStar,
   FaMapMarkerAlt,
+  FaCrown,
 } from "react-icons/fa";
 
 interface Favorite {
@@ -53,12 +54,15 @@ export default function AccountPage() {
   const [favoriteToDelete, setFavoriteToDelete] = useState<Favorite | null>(null);
   const [showRemoveFromSpinsModal, setShowRemoveFromSpinsModal] = useState(false);
   const [spinPlaceToRemove, setSpinPlaceToRemove] = useState<{place_id: string, name: string} | null>(null);
+  const [googleApiAccess, setGoogleApiAccess] = useState<boolean | null>(null);
+  const [isLoadingAccess, setIsLoadingAccess] = useState(true);
 
   // Fetch data when component mounts
   useEffect(() => {
     if (status === "authenticated") {
       fetchFavorites();
       fetchSpins();
+      fetchGoogleApiAccess();
     }
   }, [status]);
 
@@ -100,6 +104,20 @@ export default function AccountPage() {
       console.error("Failed to fetch spins:", error);
     } finally {
       setIsLoadingSpins(false);
+    }
+  };
+
+  const fetchGoogleApiAccess = async () => {
+    try {
+      const response = await fetch("/api/user/access");
+      if (response.ok) {
+        const data = await response.json();
+        setGoogleApiAccess(data.google_api_access);
+      }
+    } catch (error) {
+      console.error("Failed to fetch Google API access:", error);
+    } finally {
+      setIsLoadingAccess(false);
     }
   };
 
@@ -156,7 +174,7 @@ export default function AccountPage() {
           },
           created_at: new Date().toISOString()
         };
-        setFavorites([...favorites, newFavorite]);
+        setFavorites([newFavorite, ...favorites]);
       } else {
         console.error('Failed to add to favorites');
       }
@@ -230,6 +248,33 @@ export default function AccountPage() {
               <FaUser className="text-[#ef4e2d]" />
               {session.user?.email}
             </p>
+            
+            {/* Google API Access Status */}
+            <div className="mt-4 inline-block">
+              {isLoadingAccess ? (
+                <div className="animate-pulse">
+                  <div className="h-6 bg-gray-200 rounded w-32"></div>
+                </div>
+              ) : (
+                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-nunito ${
+                  googleApiAccess 
+                    ? 'bg-green-100 text-green-800 border border-green-300' 
+                    : 'bg-gray-100 text-gray-600 border border-gray-300'
+                }`}>
+                  <div className={`w-2 h-2 rounded-full ${
+                    googleApiAccess ? 'bg-green-500' : 'bg-gray-400'
+                  }`}></div>
+                  {googleApiAccess ? 'Premium Maps Access' : 'Standard Maps Access'}
+                </div>
+              )}
+            </div>
+            
+            {/* OpenStreetMap Attribution Notice */}
+            {!isLoadingAccess && !googleApiAccess && (
+              <div className="mt-2 text-xs text-gray-500 font-nunito">
+                Using OpenStreetMap data © OpenStreetMap contributors (ODbL)
+              </div>
+            )}
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -267,7 +312,13 @@ export default function AccountPage() {
                           <div className="flex justify-between items-start">
                             <div className="flex-1">
                               <a
-                                href={`https://www.google.com/maps/place/?q=place_id:${favorite.place_id}`}
+                                href={(() => {
+                                  // Build Google search URL with restaurant name and address
+                                  const searchQuery = encodeURIComponent(
+                                    `${favorite.snapshot.name} ${favorite.snapshot.formatted_address || ''}`.trim()
+                                  )
+                                  return `https://www.google.com/search?q=${searchQuery}`
+                                })()}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="font-semibold text-gray-900 font-nunito tracking-wide hover:text-[#ef4e2d] underline transition-colors cursor-pointer block mb-1"
@@ -358,7 +409,13 @@ export default function AccountPage() {
                           <div className="flex justify-between items-start">
                             <div className="flex-1">
                               <a
-                                href={`https://www.google.com/maps/place/?q=place_id:${selectedPlace?.place_id}`}
+                                href={(() => {
+                                  // Build Google search URL with restaurant name and address
+                                  const searchQuery = encodeURIComponent(
+                                    `${selectedPlace?.name || 'Unknown Place'} ${selectedPlace?.vicinity || ''}`.trim()
+                                  )
+                                  return `https://www.google.com/search?q=${searchQuery}`
+                                })()}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="font-semibold text-gray-900 font-nunito tracking-wide hover:text-[#ef4e2d] underline transition-colors cursor-pointer block mb-1"
@@ -447,6 +504,22 @@ export default function AccountPage() {
                 Spin the Wheel Again
               </a>
             </Button>
+            
+            {/* Admin Panel Link */}
+            {process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(',').includes(session.user?.email || '') && (
+              <div className="mt-4">
+                <Button
+                  asChild
+                  variant="outline"
+                  className="text-lg font-bold w-auto h-auto px-4 py-1 border-2 border-[#3d3d3d] font-league-spartan transition-all duration-200 uppercase rounded-2xl hover:bg-[#3d3d3d] hover:text-white hover:cursor-pointer"
+                >
+                  <a href="/admin">
+                    <FaCrown className="mr-2 -mt-1" />
+                    Admin Panel
+                  </a>
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -457,7 +530,7 @@ export default function AccountPage() {
           className="fixed inset-0 flex items-center justify-center z-50 p-4"
           style={{ backgroundColor: "rgba(0, 0, 0, 0.3)" }}
         >
-          <div className="bg-[#d8bf9f] border-4 px-4 py-2 border-[#3d3d3d] rounded-2xl shadow-2xl max-w-md w-full mx-4 relative animate-in fade-in duration-300 overflow-hidden">
+          <div className="bg-[#d8bf9f] border-4 px-4 py-2 border-[#3d3d3d] rounded-2xl   2xl max-w-md w-full mx-4 relative animate-in fade-in duration-300 overflow-hidden">
             {/* Pattern background - always first, z-0 */}
             <Pattern
               screen="absolute"
@@ -500,7 +573,7 @@ export default function AccountPage() {
           className="fixed inset-0 flex items-center justify-center z-50 p-4"
           style={{ backgroundColor: "rgba(0, 0, 0, 0.3)" }}
         >
-          <div className="bg-[#d8bf9f] border-4 px-4 py-2 border-[#3d3d3d] rounded-2xl shadow-2xl max-w-md w-full mx-4 relative animate-in fade-in duration-300 overflow-hidden">
+          <div className="bg-[#d8bf9f] border-4 px-4 py-2 border-[#3d3d3d] rounded-2xl   2xl max-w-md w-full mx-4 relative animate-in fade-in duration-300 overflow-hidden">
             {/* Pattern background - always first, z-0 */}
             <Pattern
               screen="absolute"
