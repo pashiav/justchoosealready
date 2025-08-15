@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS users (
   email TEXT UNIQUE NOT NULL,
   name TEXT,
   image TEXT,
+  google_api_access BOOLEAN DEFAULT FALSE, -- Controls access to Google Maps API
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
