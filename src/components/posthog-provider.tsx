@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { usePostHog } from 'posthog-js/react';
 
 import posthog from 'posthog-js';
@@ -32,7 +32,7 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
 }
 
 // Component to track page views automatically
-export function PostHogPageview(): null {
+function PostHogPageviewInner(): null {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const posthog = usePostHog();
@@ -50,4 +50,13 @@ export function PostHogPageview(): null {
   }, [pathname, searchParams, posthog]);
 
   return null;
+}
+
+// Wrapper component with Suspense boundary
+export function PostHogPageview(): React.JSX.Element {
+  return (
+    <Suspense fallback={null}>
+      <PostHogPageviewInner />
+    </Suspense>
+  );
 }
