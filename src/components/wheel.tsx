@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { useWheelStore } from "@/lib/store";
 import { PlaceOption } from "@/lib/google";
@@ -33,21 +33,7 @@ export function Wheel() {
 
   const canSpin = selectedOptions.length >= 2;
 
-  // Check if this place is already a favorite when winner changes
-  useEffect(() => {
-    if (winner && session) {
-      checkFavoriteStatus();
-    }
-  }, [winner, session]);
-
-  // Check if user has Google API access
-  useEffect(() => {
-    if (session) {
-      checkGoogleAccess();
-    }
-  }, [session]);
-
-  const checkGoogleAccess = async () => {
+  const checkGoogleAccess = useCallback(async () => {
     if (!session) return;
     
     try {
@@ -60,9 +46,9 @@ export function Wheel() {
       console.error('Failed to check Google API access:', error);
       setHasGoogleAccess(false);
     }
-  };
+  }, [session]);
 
-  const checkFavoriteStatus = async () => {
+  const checkFavoriteStatus = useCallback(async () => {
     if (!winner || !session) return;
 
     try {
@@ -75,7 +61,21 @@ export function Wheel() {
     } catch (error) {
       console.error('Failed to check favorite status:', error);
     }
-  };
+  }, [winner, session]);
+
+  // Check if this place is already a favorite when winner changes
+  useEffect(() => {
+    if (winner && session) {
+      checkFavoriteStatus();
+    }
+  }, [winner, session, checkFavoriteStatus]);
+
+  // Check if user has Google API access
+  useEffect(() => {
+    if (session) {
+      checkGoogleAccess();
+    }
+  }, [session, checkGoogleAccess]);
 
   const toggleFavorite = async () => {
     if (!winner || !session) {
