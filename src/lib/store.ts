@@ -44,7 +44,16 @@ export const useWheelStore = create<WheelState>((set, get) => ({
   },
 
   // Actions
-  setSelectedOptions: (options) => set({ selectedOptions: options }),
+  setSelectedOptions: (options) => {
+    console.log('Setting selected options:', options);
+    console.log('Options type:', typeof options);
+    console.log('Is array:', Array.isArray(options));
+    if (Array.isArray(options)) {
+      console.log('Options length:', options.length);
+      console.log('First option:', options[0]);
+    }
+    set({ selectedOptions: options });
+  },
   
   addOption: (option) => {
     const { selectedOptions } = get()

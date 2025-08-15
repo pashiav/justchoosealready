@@ -22,6 +22,7 @@ export interface Database {
           email: string
           name: string | null
           image: string | null
+          google_api_access: boolean
           created_at: string
         }
         Insert: {
@@ -29,6 +30,7 @@ export interface Database {
           email: string
           name?: string | null
           image?: string | null
+          google_api_access?: boolean
           created_at?: string
         }
         Update: {
@@ -36,6 +38,7 @@ export interface Database {
           email?: string
           name?: string | null
           image?: string | null
+          google_api_access?: boolean
           created_at?: string
         }
       }

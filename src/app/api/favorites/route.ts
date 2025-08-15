@@ -23,8 +23,9 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { place_id } = body
+    const { place_id, place_data } = body
     console.log('Place ID received:', place_id);
+    console.log('Place data received:', place_data);
 
     if (!place_id) {
       console.log('No place_id in request body');
@@ -34,24 +35,60 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Get place details to create snapshot
-    console.log('Getting place details for:', place_id);
-    const placeDetails = await getPlaceDetails(place_id)
-    console.log('Place details received:', { 
-      name: placeDetails.name, 
-      address: placeDetails.formatted_address 
-    });
+    // Check if this is an OpenStreetMap place (place_id starts with 'osm_')
+    const isOpenStreetMapPlace = place_id.startsWith('osm_');
     
-    // Create minimal snapshot
-    const snapshot = {
-      place_id: placeDetails.place_id,
-      name: placeDetails.name,
-      formatted_address: placeDetails.formatted_address,
-      rating: placeDetails.rating,
-      user_ratings_total: placeDetails.user_ratings_total,
-      price_level: placeDetails.price_level,
-      website: placeDetails.website,
-      opening_hours: placeDetails.opening_hours?.open_now
+    let snapshot;
+    
+    if (isOpenStreetMapPlace) {
+      // For OpenStreetMap places, use the provided place data if available
+      console.log('OpenStreetMap place detected, creating snapshot from provided data');
+      if (place_data) {
+        snapshot = {
+          place_id: place_id,
+          name: place_data.name || 'Unnamed Restaurant',
+          formatted_address: place_data.formatted_address || place_data.vicinity || 'Address not available',
+          rating: undefined,
+          user_ratings_total: undefined,
+          price_level: undefined,
+          website: undefined,
+          opening_hours: undefined,
+          source: 'OpenStreetMap'
+        };
+      } else {
+        // Fallback if no place data provided
+        snapshot = {
+          place_id: place_id,
+          name: 'Restaurant from OpenStreetMap',
+          formatted_address: 'Address not available',
+          rating: undefined,
+          user_ratings_total: undefined,
+          price_level: undefined,
+          website: undefined,
+          opening_hours: undefined,
+          source: 'OpenStreetMap'
+        };
+      }
+    } else {
+      // For Google Places API results, get full details
+      console.log('Getting place details for Google Places API result:', place_id);
+      const placeDetails = await getPlaceDetails(place_id);
+      console.log('Place details received:', { 
+        name: placeDetails.name, 
+        address: placeDetails.formatted_address 
+      });
+      
+      snapshot = {
+        place_id: placeDetails.place_id,
+        name: placeDetails.name,
+        formatted_address: placeDetails.formatted_address,
+        rating: placeDetails.rating,
+        user_ratings_total: placeDetails.user_ratings_total,
+        price_level: placeDetails.price_level,
+        website: placeDetails.website,
+        opening_hours: placeDetails.opening_hours?.open_now,
+        source: 'Google Places API'
+      };
     }
 
     console.log('Creating snapshot:', snapshot);

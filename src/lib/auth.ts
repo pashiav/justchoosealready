@@ -27,23 +27,45 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account, profile }) {
       if (user.email) {
         try {
-          // Upsert user to Supabase database
-          const { error } = await supabase
+          // Check if user already exists
+          const { data: existingUser } = await supabase
             .from('users')
-            .upsert({
-              id: user.id,
-              email: user.email,
-              name: user.name,
-              image: user.image,
-            }, {
-              onConflict: 'id'
-            })
+            .select('google_api_access')
+            .eq('id', user.id)
+            .single()
 
-          if (error) {
-            console.error('Failed to upsert user to database:', error)
+          if (existingUser) {
+            // User exists - only update non-sensitive fields, preserve google_api_access
+            const { error } = await supabase
+              .from('users')
+              .update({
+                email: user.email,
+                name: user.name,
+                image: user.image,
+              })
+              .eq('id', user.id)
+
+            if (error) {
+              console.error('Failed to update existing user:', error)
+            }
+          } else {
+            // New user - insert with default google_api_access: false
+            const { error } = await supabase
+              .from('users')
+              .insert({
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                image: user.image,
+                google_api_access: false, // Only set false for new users
+              })
+
+            if (error) {
+              console.error('Failed to insert new user:', error)
+            }
           }
         } catch (error) {
-          console.error('Error upserting user:', error)
+          console.error('Error handling user sign in:', error)
         }
       }
       return true

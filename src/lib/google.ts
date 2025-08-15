@@ -9,6 +9,7 @@ export type PlaceOption = {
   user_ratings_total?: number
   price_level?: number
   vicinity?: string
+  formatted_address?: string
   photo_ref?: string
 }
 
