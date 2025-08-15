@@ -62,19 +62,19 @@ export function OptionList() {
   }
 
   return (
-    <div className="w-fullp-6 rounded-lg font-nunito">
+    <div className="max-w-full  p-1 md:p-6 rounded-lg font-nunito">
       <h3 className="text-2xl font-semibold mb-4 text-[#3d3d3d] font-lilita uppercase">
         Food Options ({options.length})
       </h3>
       <hr className="-mt-4 pb-4 border-t-3 border-black" />
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 w-full">
         {options.map((option) => (
           <div
             key={option.place_id}
             className="flex items-start justify-between py-3 px-3 bg-transparent rounded-2xl border border-amber-950"
             style={{ backgroundColor: "rgba(255,255,255,0.30)" }}
           >
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 flex-1 pr-2">
               {/* First line: Restaurant name - clickable */}
               <a
                 href={(() => {
@@ -98,7 +98,7 @@ export function OptionList() {
                 })()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-bold text-[#3d3d3d] truncate mb-1 block hover:text-[#ef4e2d] underline transition-colors cursor-pointer"
+                className="font-bold text-[#3d3d3d] mb-1 block hover:text-[#ef4e2d] underline transition-colors cursor-pointer break-words"
               >
                 {option.name}
               </a>
@@ -108,9 +108,11 @@ export function OptionList() {
                 {/* Show full address if available, otherwise show vicinity */}
                 {(option.formatted_address || option.vicinity) && 
                  (option.formatted_address !== 'Address not available' && option.vicinity !== 'Address not available') && (
-                  <span className="flex items-center gap-1 truncate">
-                    <FaMapMarkerAlt className="text-red-500 text-xs" /> 
-                    {option.formatted_address || option.vicinity}
+                  <span className="flex items-start gap-1 text-wrap max-w-full">
+                    <FaMapMarkerAlt className="text-red-500 text-base flex-shrink-0 mt-0.5" /> 
+                    <span className="text-wrap max-w-[75vw] sm:max-w-xs">
+                      {option.formatted_address || option.vicinity}
+                    </span>
                   </span>
                 )}
                 
@@ -118,8 +120,8 @@ export function OptionList() {
                 {(!option.formatted_address && !option.vicinity) || 
                  (option.formatted_address === 'Address not available' && option.vicinity === 'Address not available') && (
                   <div className="relative group">
-                    <span className="flex items-center gap-1 text-gray-400 italic cursor-help">
-                      <FaMapMarkerAlt className="text-gray-400 text-xs" /> 
+                    <span className="flex items-start gap-1 text-gray-400 italic cursor-help">
+                      <FaMapMarkerAlt className="text-gray-400 text-base flex-shrink-0 mt-0.5" /> 
                       Address not available
                       <FaInfoCircle className="text-gray-600 text-xs ml-1" />
                     </span>
@@ -156,7 +158,7 @@ export function OptionList() {
               variant="ghost"
               size="sm"
               onClick={() => removeOption(option.place_id)}
-              className="text-red-600 hover:text-red-700 hover:bg-red-50 ml-2 p-1 h-auto min-w-[24px] mt-1"
+              className="text-red-600 hover:text-red-700 hover:bg-red-50 ml-1 p-1 h-auto min-w-[24px] mt-1 flex-shrink-0"
               aria-label={`Remove ${option.name} from options`}
             >
               ✕

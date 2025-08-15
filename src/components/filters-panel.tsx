@@ -262,57 +262,59 @@ export function FiltersPanel() {
   };
 
   return (
-    <div className="rounded-lg p-6 font-lilita uppercase">
+    <div className="max-w-full rounded-lg p-1 md:p-6 font-lilita uppercase">
       <div className="space-y-6">
         {/* Location */}
         <div>
           <label className="block text-lg font-medium text-[#ef4e2d] mb-2">
             Location
           </label>
-          <div className="space-y-2 font-nunito tracking-wider relative">
-            <span className="absolute left-2 top-1/2 transform -translate-y-[1.7rem] text-black text-sm pointer-events-none">
-              <FaMapMarkerAlt />
-            </span>
-            <Input
-              ref={inputRef}
-              placeholder="Enter city, address, or landmark"
-              value={filters.locationText}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                handleLocationChange(e.target.value)
-              }
-              onKeyDown={handleKeyDown}
-              onFocus={() => {
-                if (suggestions.length > 0) setShowSuggestions(true);
-              }}
-              className="pl-8 pr-3"
-            />
+          <div className="space-y-2 font-nunito tracking-wider">
+            <div className="relative">
+              <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-black text-sm pointer-events-none z-10">
+                <FaMapMarkerAlt />
+              </span>
+              <Input
+                ref={inputRef}
+                placeholder="Enter city, address, or landmark"
+                value={filters.locationText}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  handleLocationChange(e.target.value)
+                }
+                onKeyDown={handleKeyDown}
+                onFocus={() => {
+                  if (suggestions.length > 0) setShowSuggestions(true);
+                }}
+                className="pl-8 pr-3"
+              />
 
-            {/* Autocomplete Suggestions */}
-            {showSuggestions && suggestions.length > 0 && (
-              <div
-                ref={suggestionsRef}
-                className="absolute z-50 w-full bg-white border border-gray-300 rounded-lg   lg max-h-60 overflow-y-auto"
-              >
-                {suggestions.map(
-                  (suggestion: LocationSuggestion, index: number) => (
-                    <div
-                      key={suggestion.placeId}
-                      className={`px-3 py-2 cursor-pointer hover:bg-gray-100 ${
-                        index === selectedSuggestionIndex ? "bg-gray-100" : ""
-                      }`}
-                      onClick={() => handleSuggestionSelect(suggestion)}
-                    >
-                      <div className="text-sm text-gray-800">
-                        {suggestion.description}
+              {/* Autocomplete Suggestions */}
+              {showSuggestions && suggestions.length > 0 && (
+                <div
+                  ref={suggestionsRef}
+                  className="absolute z-50 w-full bg-white border border-gray-300 rounded-lg   lg max-h-60 overflow-y-auto"
+                >
+                  {suggestions.map(
+                    (suggestion: LocationSuggestion, index: number) => (
+                      <div
+                        key={suggestion.placeId}
+                        className={`px-3 py-2 cursor-pointer hover:bg-gray-100 ${
+                          index === selectedSuggestionIndex ? "bg-gray-100" : ""
+                        }`}
+                        onClick={() => handleSuggestionSelect(suggestion)}
+                      >
+                        <div className="text-sm text-gray-800">
+                          {suggestion.description}
+                        </div>
+                        <div className="text-xs text-gray-500 capitalize">
+                          {suggestion.types[0]?.replace(/_/g, " ")}
+                        </div>
                       </div>
-                      <div className="text-xs text-gray-500 capitalize">
-                        {suggestion.types[0]?.replace(/_/g, " ")}
-                      </div>
-                    </div>
-                  )
-                )}
-              </div>
-            )}
+                    )
+                  )}
+                </div>
+              )}
+            </div>
 
             {isGeocoding && (
               <div className="text-xs text-[#ef4e2d] text-center">

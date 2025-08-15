@@ -230,7 +230,7 @@ export function Wheel() {
 
   return (
     <>
-      <div className="text-center">
+      <div className="max-w-full text-center">
         <div className="flex justify-center w-full">
           <div className="relative inline-block w-full max-w-[440px]">
             {/* Fixed Pointer (stays at top, pointing down into the wheel) */}

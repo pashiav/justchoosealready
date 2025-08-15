@@ -26,9 +26,9 @@ const leagueSpartan = League_Spartan({
 });
 
 export const metadata: Metadata = {
-  title: "Just Choose Already - Restaurant Decision Wheel",
+  title: "JUST CHOOSE ALREADY",
   description:
-    "Can't decide where to eat? Let our magical wheel choose the perfect restaurant for you!",
+    "Let the Wheel Decide Your Meal.",
   icons: {
     icon: [
       { url: "/favicon.png", sizes: "32x32", type: "image/png" },
