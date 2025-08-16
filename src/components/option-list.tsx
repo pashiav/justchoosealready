@@ -152,18 +152,13 @@ export function OptionList() {
                   </span>
                 )}
 
-                {option.business_status && (
+                {option.business_status && (option.business_status === 'CLOSED_PERMANENTLY' || option.business_status === 'TEMPORARILY_CLOSED') && (
                   <span className={`text-xs px-2 py-1 rounded-full whitespace-nowrap ${
-                    option.business_status === 'OPERATIONAL' 
-                      ? 'bg-green-100 text-green-800' 
-                      : option.business_status === 'TEMPORARILY_CLOSED'
+                    option.business_status === 'TEMPORARILY_CLOSED'
                       ? 'bg-yellow-100 text-yellow-800'
-                      : 'bg-gray-100 text-gray-800'
+                      : 'bg-red-100 text-red-800'
                   }`}>
-                    {option.business_status === 'OPERATIONAL' ? 'Open' :
-                     option.business_status === 'TEMPORARILY_CLOSED' ? 'Temporarily Closed' :
-                     option.business_status === 'CLOSED_PERMANENTLY' ? 'Permanently Closed' :
-                     option.business_status}
+                    {option.business_status === 'TEMPORARILY_CLOSED' ? 'Temporarily Closed' : 'Permanently Closed'}
                   </span>
                 )}
               </div>
