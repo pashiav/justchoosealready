@@ -13,7 +13,8 @@ export default function Footer() {
           <a href="https://github.com/pashiav/justchoosealready" target="_blank" rel="noopener noreferrer" className="hover:text-[#ef4e2d] transition-colors">GitHub</a>
         </div>
         <div className="text-xs text-gray-500 text-center md:text-right">
-          &copy; {new Date().getFullYear()} Just Choose Already. All rights reserved.
+          &copy; {new Date().getFullYear()} Just Choose Already <br />
+          Powered by Google Maps API and OpenStreetMap
         </div>
       </div>
     </footer>
