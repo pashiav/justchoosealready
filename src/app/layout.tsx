@@ -40,6 +40,13 @@ export const metadata: Metadata = {
   other: {
     'google-fonts': 'https://fonts.googleapis.com',
   },
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    viewportFit: 'cover',
+  },
 };
 
 export default function RootLayout({
@@ -60,12 +67,14 @@ export default function RootLayout({
         {/* Background Pattern - SVG pattern embedded as CSS */}
         <Pattern screen="fixed" />
         {/* Main Content Container - appears above background */}
-        <div className="relative z-10">
+        <div className="relative z-10 min-h-screen flex flex-col">
           <PostHogProvider>
             <PostHogPageview />
             <NextAuthProvider>
               <Header />
-              {children}
+              <main className="flex-1 pt-4">
+                {children}
+              </main>
               <Footer />
             </NextAuthProvider>
           </PostHogProvider>

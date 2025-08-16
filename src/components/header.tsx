@@ -9,10 +9,8 @@ export function Header() {
   const { data: session } = useSession();
 
   return (
-    <header className="font-lilita uppercase bg-transparent">
-
-
-      <div className="container mx-auto px-4 pt-6 pb-2">
+    <header className="font-lilita uppercase bg-transparent relative z-20 w-full">
+      <div className="container mx-auto px-4 pt-6">
         <nav className="flex items-center gap-8 tracking-wider justify-end w-full text-sm">
           <Link
             href="/spin"

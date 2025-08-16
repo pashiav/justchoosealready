@@ -10,9 +10,9 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center">
+      <section className="relative min-h-screen flex items-center justify-center hero-section -mt-[4rem]">
         <div className="container mx-auto px-6 py-0 text-center relative z-10">
-          <div className="max-w-6xl mx-auto space-y-10 -mt-[6rem]">
+          <div className="max-w-6xl mx-auto space-y-10">
             {/* Main Headline */}
             <div className="space-y-2">
               <h1 className="text-5xl md:text-7xl lg:text-8xl font-lilita text-[#2d2e40] leading-tight tracking-tight">

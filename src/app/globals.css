@@ -189,3 +189,77 @@
 .font-nunito {
   font-family: "Nunito", sans-serif;
 }
+
+/* Default hero section spacing for normal devices */
+.hero-section {
+  padding-top: 1rem;
+}
+
+/* Nest Hub and similar device fixes */
+@media screen and (min-width: 1024px) and (max-height: 600px) {
+  /* Handle Nest Hub's 1024x600 aspect ratio */
+  .min-h-screen {
+    min-height: 100vh;
+    min-height: 100dvh; /* Use dynamic viewport height when available */
+  }
+  
+  /* Ensure proper spacing on short height screens */
+  section {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+  
+  /* Adjust hero section for short screens */
+  .hero-section {
+    padding-top: 4rem;
+    padding-bottom: 2rem;
+  }
+}
+
+/* Additional viewport height support for modern browsers */
+@supports (height: 100dvh) {
+  .min-h-screen {
+    min-height: 100dvh;
+  }
+}
+
+/* Ensure content doesn't overlap on very short screens */
+@media screen and (max-height: 500px) {
+  .pt-20 {
+    padding-top: 1rem;
+  }
+  
+  .py-24 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+}
+
+/* Prevent header overlap on Nest Hub and similar devices */
+@media screen and (min-width: 1024px) and (max-height: 600px) {
+  header {
+    position: relative;
+    z-index: 20;
+  }
+  
+  main {
+    padding-top: 1rem;
+  }
+  
+  .hero-section {
+    margin-top: 0;
+    padding-top: 2rem;
+  }
+}
+
+/* Additional safety measures for very short viewports */
+@media screen and (max-height: 400px) {
+  .hero-section {
+    padding-top: 1rem;
+    min-height: auto;
+  }
+  
+  .min-h-screen {
+    min-height: auto;
+  }
+}
