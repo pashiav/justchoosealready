@@ -262,7 +262,7 @@ export function FiltersPanel() {
   };
 
   return (
-    <div className="max-w-full rounded-lg p-1 md:p-6 font-lilita uppercase">
+    <div className="max-w-full rounded-lg p-4 md:p-6 font-lilita uppercase">
       <div className="space-y-6">
         {/* Location */}
         <div>

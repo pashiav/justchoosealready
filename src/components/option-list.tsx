@@ -62,7 +62,7 @@ export function OptionList() {
   }
 
   return (
-    <div className="max-w-full  p-1 md:p-6 rounded-lg font-nunito">
+    <div className="max-w-full  p-4 md:p-6 rounded-lg font-nunito">
       <h3 className="text-2xl font-semibold mb-4 text-[#3d3d3d] font-lilita uppercase">
         Food Options ({options.length})
       </h3>
