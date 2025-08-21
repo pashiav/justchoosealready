@@ -1,4 +1,4 @@
-# 𓌉◯𓇋 JUST CHOOSE ALREADY 𓐐𓎩
+# 𓌉◯𓇋 JUST CHOOSE ALREADY
 
 > Tired of your friends never knowing what to eat? Wanting them to *JUST CHOOSE ALREADY*?
 
