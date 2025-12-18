@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { searchPlaces, SearchQuery } from '@/lib/google'
-import { searchNearbyWithOpenStreetMap, getOSMAttribution } from '@/lib/openstreetmap'
+import { searchNearbyWithOpenStreetMap, getOSMAttribution, geocodeWithOpenStreetMap } from '@/lib/openstreetmap'
 import { supabase } from '@/lib/supabase'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
@@ -134,39 +134,18 @@ async function handleOpenStreetMapSearch(searchParams: SearchParams) {
       console.log('🔄 OpenStreetMap: No coordinates provided, geocoding location text:', searchParams.locationText)
       
       try {
-        // Call our own geocode API to get coordinates
-        const geocodeResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/geocode`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            locationText: searchParams.locationText, 
-            type: 'geocode' 
-          })
-        })
+        // Directly call the geocoding function instead of making an HTTP request
+        const geocodeResult = await geocodeWithOpenStreetMap(searchParams.locationText)
         
-        if (geocodeResponse.ok) {
-          const geocodeData = await geocodeResponse.json()
-          
-          if (geocodeData.lat && geocodeData.lng) {
-            searchLat = geocodeData.lat
-            searchLng = geocodeData.lng
-            console.log('  OpenStreetMap: Successfully geocoded to coordinates:', searchLat, searchLng)
-          } else {
-            console.log('  OpenStreetMap: Geocoding failed - no coordinates in response')
-            return NextResponse.json(
-              { 
-                error: 'Could not find coordinates for this location',
-                location: searchParams.locationText,
-                note: 'Please try a more specific location or use coordinates directly.'
-              },
-              { status: 400 }
-            )
-          }
+        if (geocodeResult.lat && geocodeResult.lng) {
+          searchLat = geocodeResult.lat
+          searchLng = geocodeResult.lng
+          console.log('  OpenStreetMap: Successfully geocoded to coordinates:', searchLat, searchLng)
         } else {
-          console.log('  OpenStreetMap: Geocoding API call failed')
+          console.log('  OpenStreetMap: Geocoding failed - no coordinates in response')
           return NextResponse.json(
             { 
-              error: 'Failed to geocode location for search',
+              error: geocodeResult.error || 'Could not find coordinates for this location',
               location: searchParams.locationText,
               note: 'Please try a more specific location or use coordinates directly.'
             },
