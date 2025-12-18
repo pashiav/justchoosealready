@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { useWheelStore } from "@/lib/store";
 import { FaMapMarkerAlt, FaSearch } from "react-icons/fa";
+import { useSession } from "next-auth/react";
 
 const CUISINES = [
   "Italian",
@@ -41,15 +42,39 @@ interface LocationSuggestion {
 
 export function FiltersPanel() {
   const { filters, setFilters, setSelectedOptions } = useWheelStore();
+  const { data: session } = useSession();
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
+  const [hasGoogleAccess, setHasGoogleAccess] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+
+  // Check if user has Google API access (premium)
+  const checkGoogleAccess = useCallback(async () => {
+    if (!session) return;
+    
+    try {
+      const response = await fetch('/api/user/access');
+      if (response.ok) {
+        const data = await response.json();
+        setHasGoogleAccess(data.google_api_access || false);
+      }
+    } catch (error) {
+      console.error('Failed to check Google API access:', error);
+      setHasGoogleAccess(false);
+    }
+  }, [session]);
+
+  useEffect(() => {
+    if (session) {
+      checkGoogleAccess();
+    }
+  }, [session, checkGoogleAccess]);
 
   // Debounced autocomplete function
   const debouncedAutocomplete = useCallback((locationText: string) => {
@@ -370,58 +395,60 @@ export function FiltersPanel() {
           </Select>
         </div>
 
-        {/* Price Ranges */}
-        <div>
-          <label className="block text-lg font-medium text-[#ef4e2d] mb-2">
-            Price Ranges
-          </label>
-          <div className="space-y-2 font-nunito tracking-wider">
-            {[
-              { value: 1, label: "$", description: "Under $10" },
-              { value: 2, label: "$$", description: "$11-$30" },
-              { value: 3, label: "$$$", description: "$31-$60" },
-              { value: 4, label: "$$$$", description: "Over $60" },
-            ].map((priceOption) => (
-              <label
-                key={priceOption.value}
-                className="flex items-center space-x-3 cursor-pointer"
-              >
-                <input
-                  type="checkbox"
-                  checked={
-                    filters.priceRanges?.includes(priceOption.value) || false
-                  }
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const currentRanges = filters.priceRanges || [];
-                    if (e.target.checked) {
-                      setFilters({
-                        priceRanges: [...currentRanges, priceOption.value],
-                      });
-                    } else {
-                      setFilters({
-                        priceRanges: currentRanges.filter(
-                          (p: number) => p !== priceOption.value
-                        ),
-                      });
+        {/* Price Ranges - Only for premium users with Google API access */}
+        {hasGoogleAccess && (
+          <div>
+            <label className="block text-lg font-medium text-[#ef4e2d] mb-2">
+              Price Ranges
+            </label>
+            <div className="space-y-2 font-nunito tracking-wider">
+              {[
+                { value: 1, label: "$", description: "Under $10" },
+                { value: 2, label: "$$", description: "$11-$30" },
+                { value: 3, label: "$$$", description: "$31-$60" },
+                { value: 4, label: "$$$$", description: "Over $60" },
+              ].map((priceOption) => (
+                <label
+                  key={priceOption.value}
+                  className="flex items-center space-x-3 cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={
+                      filters.priceRanges?.includes(priceOption.value) || false
                     }
-                  }}
-                  className="w-4 h-4 text-[#ef4e2d] bg-white border-2 border-black rounded focus:ring-[#ef4e2d] focus:ring-2"
-                />
-                <span className="text-lg font-bold text-black">
-                  {priceOption.label}
-                </span>
-                <span className="text-sm text-gray-600">
-                  {priceOption.description}
-                </span>
-              </label>
-            ))}
-            {(!filters.priceRanges || filters.priceRanges.length === 0) && (
-              <p className="text-xs text-gray-500 italic">
-                Select price ranges or leave empty for any price
-              </p>
-            )}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      const currentRanges = filters.priceRanges || [];
+                      if (e.target.checked) {
+                        setFilters({
+                          priceRanges: [...currentRanges, priceOption.value],
+                        });
+                      } else {
+                        setFilters({
+                          priceRanges: currentRanges.filter(
+                            (p: number) => p !== priceOption.value
+                          ),
+                        });
+                      }
+                    }}
+                    className="w-4 h-4 text-[#ef4e2d] bg-white border-2 border-black rounded focus:ring-[#ef4e2d] focus:ring-2"
+                  />
+                  <span className="text-lg font-bold text-black">
+                    {priceOption.label}
+                  </span>
+                  <span className="text-sm text-gray-600">
+                    {priceOption.description}
+                  </span>
+                </label>
+              ))}
+              {(!filters.priceRanges || filters.priceRanges.length === 0) && (
+                <p className="text-xs text-gray-500 italic">
+                  Select price ranges or leave empty for any price
+                </p>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Distance */}
         <div>
@@ -471,11 +498,12 @@ export function FiltersPanel() {
 
         {/* Subtitle */}
         {(filters.cuisine && filters.cuisine !== "any") ||
-        (filters.priceRanges && filters.priceRanges.length > 0) ? (
+        (hasGoogleAccess && filters.priceRanges && filters.priceRanges.length > 0) ? (
           <p className="text-sm text-gray-600 text-center p-3 bg-gray-50 rounded-lg">
             {filters.cuisine !== "any" ? filters.cuisine : "Any"} within{" "}
             {filters.radiusMiles} miles
-            {filters.priceRanges &&
+            {hasGoogleAccess &&
+              filters.priceRanges &&
               filters.priceRanges.length > 0 &&
               ` • ${filters.priceRanges
                 .map((p: number) => "$".repeat(p))
