@@ -78,8 +78,15 @@ export function FiltersPanel() {
     }
   }, [session, checkGoogleAccess]);
 
-  // Debounced autocomplete function
+  // Debounced autocomplete function (only works with Google Maps API)
   const debouncedAutocomplete = useCallback((locationText: string) => {
+    // Don't use autocomplete if user doesn't have Google access (OpenStreetMap doesn't support it)
+    if (!hasGoogleAccess) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
@@ -108,7 +115,7 @@ export function FiltersPanel() {
         setShowSuggestions(false);
       }
     }, 300); // Reduced to 300ms for better UX
-  }, []);
+  }, [hasGoogleAccess]);
 
   // Handle location input changes
   const handleLocationChange = (locationText: string) => {
