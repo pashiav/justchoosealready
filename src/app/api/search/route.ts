@@ -4,15 +4,17 @@ import { searchNearbyWithOpenStreetMap, getOSMAttribution, geocodeWithOpenStreet
 import { supabase } from '@/lib/supabase'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
+import { generateLocationSuggestions } from '@/lib/utils'
 
 // Use the same type as the google.ts file
 type SearchParams = SearchQuery
 
 export async function POST(request: NextRequest) {
+  let body: { locationText?: string; lat?: number; lng?: number; radiusMiles?: number; cuisine?: string; price?: number; priceRanges?: number[] } = {}
   try {
-    const body = await request.json()
+    body = await request.json()
     const { locationText, lat, lng, radiusMiles, cuisine, price, priceRanges } = body
-    
+
     console.log('Search API called with:', { locationText, lat, lng, radiusMiles, cuisine, price })
 
     // Validate required fields
@@ -23,22 +25,22 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // If we have coordinates, use them; otherwise geocode the locationText
-    const searchParams: SearchParams = {
-      locationText: lat && lng ? undefined : locationText,
-      lat,
-      lng,
-      radiusMiles,
-      cuisine,
-      price,
-      priceRanges
-    }
-
     if (!radiusMiles || radiusMiles < 1 || radiusMiles > 25) {
       return NextResponse.json(
         { error: 'Radius must be between 1 and 25 miles' },
         { status: 400 }
       )
+    }
+
+    // If we have coordinates, use them; otherwise geocode the locationText
+    const searchParams: SearchParams = {
+      locationText: lat && lng ? undefined : locationText,
+      lat: lat ?? undefined,
+      lng: lng ?? undefined,
+      radiusMiles: radiusMiles, // validated above, so it's guaranteed to be a number
+      cuisine,
+      price: price as 1 | 2 | 3 | 4 | undefined,
+      priceRanges
     }
 
     // Check if user is authenticated and has Google API access
@@ -75,13 +77,22 @@ export async function POST(request: NextRequest) {
     
     if (error instanceof Error && error.message.includes('quota')) {
       return NextResponse.json(
-        { error: 'Search service temporarily unavailable. Please try again later.' },
+        { error: 'Search service temporarily unavailable. Please try again in a moment.' },
         { status: 429 }
       )
     }
 
+    const locationText = body.locationText || ''
+    const suggestions = locationText ? generateLocationSuggestions(locationText) : [
+      'Make sure your location includes city and state (e.g., "Kansas City, MO")',
+      'Try using a full street address if a city name isn\'t working',
+      'Check your internet connection and try again'
+    ]
     return NextResponse.json(
-      { error: 'Failed to search restaurants' },
+      { 
+        error: 'Something went wrong with the search',
+        suggestions
+      },
       { status: 500 }
     )
   }
@@ -143,22 +154,26 @@ async function handleOpenStreetMapSearch(searchParams: SearchParams) {
           console.log('  OpenStreetMap: Successfully geocoded to coordinates:', searchLat, searchLng)
         } else {
           console.log('  OpenStreetMap: Geocoding failed - no coordinates in response')
+          const locationText = searchParams.locationText || ''
+          const suggestions = generateLocationSuggestions(locationText)
           return NextResponse.json(
             { 
-              error: geocodeResult.error || 'Could not find coordinates for this location',
-              location: searchParams.locationText,
-              note: 'Please try a more specific location or use coordinates directly.'
+              error: 'Couldn\'t find that location',
+              location: locationText,
+              suggestions
             },
             { status: 400 }
           )
         }
       } catch (geocodeError) {
         console.error('  OpenStreetMap: Error during geocoding:', geocodeError)
+        const locationText = searchParams.locationText || ''
+        const suggestions = generateLocationSuggestions(locationText)
         return NextResponse.json(
           { 
-            error: 'Failed to process location for search',
-            location: searchParams.locationText,
-            note: 'Please try a more specific location or use coordinates directly.'
+            error: 'Couldn\'t process that location',
+            location: locationText,
+            suggestions
           },
           { status: 400 }
         )
@@ -167,10 +182,13 @@ async function handleOpenStreetMapSearch(searchParams: SearchParams) {
     
     // If we still don't have coordinates, return an error
     if (!searchLat || !searchLng) {
+      const locationText = searchParams.locationText || ''
+      const suggestions = generateLocationSuggestions(locationText)
       return NextResponse.json(
         { 
-          error: 'Search requires coordinates. Please provide lat/lng or a location that can be geocoded.',
-          note: 'OpenStreetMap has limited functionality compared to Google Maps API. Consider upgrading to premium access for better features.'
+          error: 'Couldn\'t find that location',
+          location: locationText,
+          suggestions
         },
         { status: 400 }
       )
@@ -220,8 +238,17 @@ async function handleOpenStreetMapSearch(searchParams: SearchParams) {
     return NextResponse.json(responseWithAttribution)
   } catch (error) {
     console.error('OpenStreetMap search error:', error)
+    const locationText = searchParams.locationText || ''
+    const suggestions = locationText ? generateLocationSuggestions(locationText) : [
+      'Make sure your location includes city and state (e.g., "Kansas City, MO")',
+      'Try using a full street address if a city name isn\'t working',
+      'Check your internet connection and try again'
+    ]
     return NextResponse.json(
-      { error: 'Failed to search with OpenStreetMap' },
+      { 
+        error: 'Something went wrong with the search',
+        suggestions
+      },
       { status: 500 }
     )
   }

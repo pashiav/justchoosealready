@@ -13,6 +13,7 @@ import {
 import { useWheelStore } from "@/lib/store";
 import { FaMapMarkerAlt, FaSearch } from "react-icons/fa";
 import { useSession } from "next-auth/react";
+import { generateLocationSuggestions } from "@/lib/utils";
 
 const CUISINES = [
   "Italian",
@@ -45,6 +46,7 @@ export function FiltersPanel() {
   const { data: session } = useSession();
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [errorSuggestions, setErrorSuggestions] = useState<string[]>([]);
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -212,6 +214,7 @@ export function FiltersPanel() {
 
     setIsSearching(true);
     setError(null);
+    setErrorSuggestions([]);
 
     try {
       const cleanQuery = {
@@ -239,6 +242,7 @@ export function FiltersPanel() {
       const data = await response.json();
       if (data.error) {
         setError(data.error);
+        setErrorSuggestions(data.suggestions || []);
       } else {
         // Handle different API response structures
         let options;
@@ -260,10 +264,26 @@ export function FiltersPanel() {
           setSelectedOptions(options);
         } else {
           setError('No restaurants found in this area');
+          // Generate helpful suggestions based on the location entered
+          const locationSuggestions = generateLocationSuggestions(filters.locationText || '');
+          if (locationSuggestions.length > 0) {
+            setErrorSuggestions(locationSuggestions);
+          } else {
+            setErrorSuggestions([
+              'Try expanding your search radius',
+              'Try a different location or neighborhood',
+              'Try removing cuisine filters'
+            ]);
+          }
         }
       }
     } catch {
-      setError("Failed to search. Please try again.");
+      setError("Couldn't complete the search");
+      setErrorSuggestions([
+        'Make sure your location includes city and state (e.g., "Kansas City, MO")',
+        'Try using a full street address if a city name isn\'t working',
+        'Check your internet connection and try again'
+      ]);
     } finally {
       setIsSearching(false);
     }
@@ -279,10 +299,17 @@ export function FiltersPanel() {
             lng: position.coords.longitude,
           });
         },
-        () => setError("Unable to get your location")
+        () => {
+          setError("Couldn't get your location");
+          setErrorSuggestions([
+            'Make sure location permissions are enabled',
+            'Try entering your location manually'
+          ]);
+        }
       );
     } else {
       setError("Geolocation not supported");
+      setErrorSuggestions(['Please enter your location manually']);
     }
   };
 
@@ -491,8 +518,21 @@ export function FiltersPanel() {
 
         {/* Error Display */}
         {error && (
-          <div className="text-sm text-red-600 text-center p-3 bg-red-50 rounded-lg border border-red-200">
-            {error}
+          <div className="text-sm text-gray-700 text-center p-4 bg-amber-50/50 rounded-lg border border-amber-200/50">
+            <div className="font-medium mb-2">{error}</div>
+            {errorSuggestions.length > 0 && (
+              <div className="mt-3 space-y-1.5 text-left">
+                <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5">
+                  Try this:
+                </div>
+                {errorSuggestions.map((suggestion, index) => (
+                  <div key={index} className="text-xs text-gray-600 flex items-start gap-2">
+                    <span className="text-amber-600 mt-0.5">•</span>
+                    <span>{suggestion}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
