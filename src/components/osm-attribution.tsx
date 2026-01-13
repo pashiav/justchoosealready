@@ -7,7 +7,7 @@ interface OSMAttributionProps {
 
 export default function OSMAttribution({ className = '', showLimitations = false }: OSMAttributionProps) {
   return (
-    <div className={`text-xs text-gray-600 font-nunito ${className}`}>
+    <div className={`text-xs text-gray-600 font-hubballi ${className}`}>
       <div className="flex items-center gap-1 mb-1">
         <FaMapMarkerAlt className="text-[#ef4e2d]" />
         <span>Powered by OpenStreetMap</span>

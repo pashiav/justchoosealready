@@ -243,7 +243,7 @@ export default function AccountPage() {
             <h1 className="text-4xl font-bold text-[#2d2e40] mb-2 font-league-spartan uppercase">
               Welcome back!
             </h1>
-            <p className="text-md font-nunito tracking-wide text-[#3d3d3d] flex items-center justify-center gap-2">
+            <p className="text-md font-hubballi tracking-wide text-[#3d3d3d] flex items-center justify-center gap-2">
               <FaUser className="text-[#ef4e2d]" />
               {session.user?.email}
             </p>
@@ -255,7 +255,7 @@ export default function AccountPage() {
                   <div className="h-6 bg-gray-200 rounded w-32"></div>
                 </div>
               ) : (
-                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-nunito ${
+                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-hubballi ${
                   googleApiAccess 
                     ? 'bg-green-100 text-green-800 border border-green-300' 
                     : 'bg-gray-100 text-gray-600 border border-gray-300'
@@ -270,7 +270,7 @@ export default function AccountPage() {
             
             {/* OpenStreetMap Attribution Notice */}
             {!isLoadingAccess && !googleApiAccess && (
-              <div className="mt-2 text-xs text-gray-500 font-nunito">
+              <div className="mt-2 text-xs text-gray-500 font-hubballi">
                 Using OpenStreetMap data © OpenStreetMap contributors (ODbL)
               </div>
             )}
@@ -325,11 +325,11 @@ export default function AccountPage() {
                                 })()}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="font-semibold text-gray-900 font-nunito tracking-wide hover:text-[#ef4e2d] underline transition-colors cursor-pointer block mb-1"
+                                className="font-semibold text-gray-900 font-hubballi tracking-wide hover:text-[#ef4e2d] underline transition-colors cursor-pointer block mb-1"
                               >
                                 {favorite.snapshot.name}
                               </a>
-                            <p className="text-sm text-gray-600 font-nunito tracking-wide">
+                            <p className="text-sm text-gray-600 font-hubballi tracking-wide">
                               <FaMapMarkerAlt
                                 className="inline mr-1 -mt-1"
                                 color="#ef4e2d"
@@ -338,13 +338,13 @@ export default function AccountPage() {
                             </p>
                             <div className="flex items-center gap-2 mt-1">
                               {favorite.snapshot.rating && (
-                                <span className="text-xs text-yellow-600 flex items-center gap-1 font-nunito tracking-wide">
+                                <span className="text-xs text-yellow-600 flex items-center gap-1 font-hubballi tracking-wide">
                                   <FaStar className="text-yellow-500" />
                                   {favorite.snapshot.rating}
                                 </span>
                               )}
                               {favorite.snapshot.price_level && (
-                                <span className="text-xs text-green-600 font-nunito tracking-wide">
+                                <span className="text-xs text-green-600 font-hubballi tracking-wide">
                                   {Array(favorite.snapshot.price_level)
                                     .fill("$")
                                     .join("")}
@@ -356,7 +356,7 @@ export default function AccountPage() {
                             onClick={() => confirmDelete(favorite)}
                             variant="ghost"
                             size="sm"
-                            className="text-red-500 text-xl font-nunito font-bold hover:text-red-700 hover:bg-red-300 hover:cursor-pointer"
+                            className="text-red-500 text-xl font-hubballi font-bold hover:text-red-700 hover:bg-red-300 hover:cursor-pointer"
                           >
                             x
                           </Button>
@@ -427,12 +427,12 @@ export default function AccountPage() {
                                 })()}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="font-semibold text-gray-900 font-nunito tracking-wide hover:text-[#ef4e2d] underline transition-colors cursor-pointer block mb-1"
+                                className="font-semibold text-gray-900 font-hubballi tracking-wide hover:text-[#ef4e2d] underline transition-colors cursor-pointer block mb-1"
                               >
                                 {selectedPlace?.name || "Unknown Place"}
                               </a>
                               {selectedPlace?.vicinity && (
-                                <p className="text-sm text-gray-600 font-nunito tracking-wide">
+                                <p className="text-sm text-gray-600 font-hubballi tracking-wide">
                                   <FaMapMarkerAlt
                                     className="inline mr-1 -mt-1"
                                     color="#ef4e2d"
@@ -442,20 +442,20 @@ export default function AccountPage() {
                               )}
                               <div className="flex items-center gap-2 mt-1">
                                 {selectedPlace?.rating && (
-                                  <span className="text-xs text-yellow-600 flex items-center gap-1 font-nunito tracking-wide">
+                                  <span className="text-xs text-yellow-600 flex items-center gap-1 font-hubballi tracking-wide">
                                     <FaStar className="text-yellow-500" />
                                     {selectedPlace.rating}
                                   </span>
                                 )}
                                 {selectedPlace?.price_level && (
-                                  <span className="text-xs text-green-600 font-nunito tracking-wide">
+                                  <span className="text-xs text-green-600 font-hubballi tracking-wide">
                                     {Array(selectedPlace.price_level)
                                       .fill("$")
                                       .join("")}
                                   </span>
                                 )}
                               </div>
-                              <p className="text-xs text-gray-400 mt-1 font-nunito tracking-wide">
+                              <p className="text-xs text-gray-400 mt-1 font-hubballi tracking-wide">
                                 {formatDate(spin.created_at)} •{" "}
                                 {spin.options.length} options
                               </p>
@@ -467,7 +467,7 @@ export default function AccountPage() {
                                   onClick={() => removeFromFavorites(selectedPlace?.place_id, selectedPlace?.name)}
                                   variant="ghost"
                                   size="sm"
-                                  className="text-red-500 text-xl font-nunito font-bold hover:text-red-700 hover:bg-red-300 hover:cursor-pointer"
+                                  className="text-red-500 text-xl font-hubballi font-bold hover:text-red-700 hover:bg-red-300 hover:cursor-pointer"
                                   title="Remove from favorites"
                                 >
                                   <FaHeart />
@@ -477,7 +477,7 @@ export default function AccountPage() {
                                   onClick={() => addToFavorites(selectedPlace?.place_id, selectedPlace?.name, selectedPlace?.vicinity, selectedPlace?.rating, selectedPlace?.price_level)}
                                   variant="ghost"
                                   size="sm"
-                                  className="text-gray-400 text-xl font-nunito font-bold hover:text-red-500 hover:bg-red-300 hover:cursor-pointer"
+                                  className="text-gray-400 text-xl font-hubballi font-bold hover:text-red-500 hover:bg-red-300 hover:cursor-pointer"
                                   title="Add to favorites"
                                 >
                                   <FaHeart />
@@ -553,20 +553,20 @@ export default function AccountPage() {
               <h3 className="text-lg font-semibold text-[#3d3d3d] mb-4 font-league-spartan uppercase">
                 Remove Favorite?
               </h3>
-              <p className="text-[#3d3d3d] mb-6 font-nunito">
+              <p className="text-[#3d3d3d] mb-6 font-hubballi">
                 Are you sure you want to remove <span className="font-semibold">&ldquo;{favoriteToDelete.snapshot.name}&rdquo;</span> from your favorites? This action cannot be undone.
               </p>
               <div className="flex gap-3 justify-center">
                 <Button
                   onClick={cancelDelete}
                   variant="outline"
-                  className="bg-[#f3ece3] font-nunito border-2 border-[#3d3d3d] hover:bg-[#e8d8c8] hover:cursor-pointer"
+                  className="bg-[#f3ece3] font-hubballi border-2 border-[#3d3d3d] hover:bg-[#e8d8c8] hover:cursor-pointer"
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={removeFavorite}
-                  className="bg-red-500 hover:bg-red-600 text-white font-nunito border-2 border-[#3d3d3d] hover:cursor-pointer"
+                  className="bg-red-500 hover:bg-red-600 text-white font-hubballi border-2 border-[#3d3d3d] hover:cursor-pointer"
                 >
                   Remove
                 </Button>
@@ -596,20 +596,20 @@ export default function AccountPage() {
               <h3 className="text-lg font-semibold text-[#3d3d3d] mb-4 font-league-spartan uppercase">
                 Remove from Favorites?
               </h3>
-              <p className="text-[#3d3d3d] mb-6 font-nunito">
+              <p className="text-[#3d3d3d] mb-6 font-hubballi">
                 Are you sure you want to remove <span className="font-semibold">&ldquo;{spinPlaceToRemove.name}&rdquo;</span> from your favorites? This action cannot be undone.
               </p>
               <div className="flex gap-3 justify-center">
                 <Button
                   onClick={cancelRemoveFromSpins}
                   variant="outline"
-                  className="bg-[#f3ece3] font-nunito border-2 border-[#3d3d3d] hover:bg-[#e8d8c8] hover:cursor-pointer"
+                  className="bg-[#f3ece3] font-hubballi border-2 border-[#3d3d3d] hover:bg-[#e8d8c8] hover:cursor-pointer"
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={confirmRemoveFromSpins}
-                  className="bg-red-500 hover:bg-red-600 text-white font-nunito border-2 border-[#3d3d3d] hover:cursor-pointer"
+                  className="bg-red-500 hover:bg-red-600 text-white font-hubballi border-2 border-[#3d3d3d] hover:cursor-pointer"
                 >
                   Remove
                 </Button>

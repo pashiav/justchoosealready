@@ -335,7 +335,7 @@ export function Wheel() {
                       }
                       textAnchor="middle"
                       dominantBaseline="middle"
-                      className="text-xs font-bold fill-zinc-100 font-nunito"
+                      className="text-xs font-bold fill-zinc-100 font-hubballi"
                       transform={`rotate(${
                         (startAngle + sliceAngle / 2) * (180 / Math.PI)
                       }, ${
@@ -376,14 +376,14 @@ export function Wheel() {
             <h3 className="text-xl font-semibold mb-2 text-gray-700 font-lilita uppercase">
               No restaurants yet...
             </h3>
-            <p className="text-gray-900 font-nunito">
+            <p className="text-gray-900 font-hubballi">
               Use the filters to search for restaurants, then spin the wheel!
             </p>
           </div>
         ) : (
           <div className="mt-8 space-y-4">
             {!canSpin && (
-              <p className="text-sm text-gray-500 font-nunito">
+              <p className="text-sm text-gray-500 font-hubballi">
                 Need at least 2 restaurants to spin
               </p>
             )}
@@ -495,7 +495,7 @@ export function Wheel() {
                   <Button
                     onClick={toggleFavorite}
                     variant="outline"
-                    className="w-full bg-[#f3ece3] py-3 font-bold font-nunito hover:cursor-pointer group border-2 border-[#3d3d3d]"
+                    className="w-full bg-[#f3ece3] py-3 font-bold font-hubballi hover:cursor-pointer group border-2 border-[#3d3d3d]"
                     disabled={isLoading}
                   >
                     {isLoading ? (
@@ -515,7 +515,7 @@ export function Wheel() {
                 ) : (
                   <Button
                     variant="outline"
-                    className="w-full bg-[#f3ece3] py-3 font-bold font-nunito opacity-50 border-2 border-[#3d3d3d]"
+                    className="w-full bg-[#f3ece3] py-3 font-bold font-hubballi opacity-50 border-2 border-[#3d3d3d]"
                     title="Sign in to save favorites"
                   >
                     <span className="flex items-center justify-center gap-2">
@@ -530,7 +530,7 @@ export function Wheel() {
                   <Button
                     onClick={resetWheel}
                     variant="outline"
-                    className="bg-[#f3ece3] flex-1 py-3 font-bold flex items-center justify-center gap-2 font-nunito hover:cursor-pointer group"
+                    className="bg-[#f3ece3] flex-1 py-3 font-bold flex items-center justify-center gap-2 font-hubballi hover:cursor-pointer group"
                   >
                     <FaRedo className="group-hover:animate-[spin_0.3s_ease-in-out]" />{" "}
                     Spin Again
@@ -539,7 +539,7 @@ export function Wheel() {
                   <Button
                     onClick={closeModal}
                     variant="outline"
-                    className="bg-[#f3ece3] flex-1 py-3 font-bold font-nunito hover:cursor-pointer group"
+                    className="bg-[#f3ece3] flex-1 py-3 font-bold font-hubballi hover:cursor-pointer group"
                   >
                     <FaCheck className="group-hover:scale-125 transition-all" />
                     Keep Result

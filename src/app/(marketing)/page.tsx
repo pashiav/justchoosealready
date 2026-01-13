@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { FaClock, FaVideo } from "react-icons/fa6";
-import { LuFerrisWheel } from "react-icons/lu";
 import { MdPhoneAndroid, MdStars } from "react-icons/md";
 import { BsArrowsMove } from "react-icons/bs";
 import { GiSpiderMask } from "react-icons/gi";
@@ -67,7 +66,7 @@ export default function HomePage() {
             {/* Problem Cards */}
             <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
               {/* Card 1: The Group Chat Chaos */}
-              <div className="bg-white/30 backdrop-blur-sm rounded-2xl shadow-lg border-l-4 border-[#ef4e2d] p-6 transform hover:scale-105 transition-all duration-300 hover:shadow-xl">
+              <div className="bg-white/30 rounded-2xl p-6 transform hover:scale-105 transition-all duration-300">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="p-3 bg-[#ef4e2d]/10 rounded-full">
                     <MdPhoneAndroid className="text-3xl text-[#ef4e2d]" />
@@ -126,7 +125,7 @@ export default function HomePage() {
               </div>
 
               {/* Card 2: The Review Rabbit Hole */}
-              <div className="bg-white/30 backdrop-blur-sm rounded-2xl shadow-lg border-l-4 border-[#2d2e40] p-6 transform hover:scale-105 transition-all duration-300 hover:shadow-xl">
+              <div className="bg-white/30 rounded-2xl p-6 transform hover:scale-105 transition-all duration-300">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="p-3 bg-[#2d2e40]/10 rounded-full">
                     <MdStars className="text-3xl text-[#2d2e40]" />
@@ -142,7 +141,7 @@ export default function HomePage() {
                 </div>
 
                 <div className="space-y-3">
-                  <div className="border-l-4 border-green-400 bg-green-50 p-3 rounded">
+                  <div className="bg-green-50 p-3 rounded">
                     <div className="flex items-center gap-2 mb-1">
                       <div className="text-yellow-400 text-sm">★★★★★</div>
                       <span className="text-xs text-gray-500">2 days ago</span>
@@ -152,7 +151,7 @@ export default function HomePage() {
                     </p>
                   </div>
 
-                  <div className="border-l-4 border-[#ef4e2d] bg-red-50 p-3 rounded">
+                  <div className="bg-red-50 p-3 rounded">
                     <div className="flex items-center gap-2 mb-1">
                       <div className="text-yellow-400 text-sm">★</div>
                       <span className="text-xs text-gray-500">1 week ago</span>
@@ -162,7 +161,7 @@ export default function HomePage() {
                     </p>
                   </div>
 
-                  <div className="border-l-4 border-[#c83e22] bg-orange-50 p-3 rounded">
+                  <div className="bg-orange-50 p-3 rounded">
                     <div className="flex items-center gap-2 mb-1">
                       <div className="text-yellow-400 text-sm">★★★★</div>
                       <span className="text-xs text-gray-500">3 days ago</span>
@@ -185,7 +184,7 @@ export default function HomePage() {
               </div>
 
               {/* Card 3: The Decision Standoff */}
-              <div className="bg-white/30 backdrop-blur-sm rounded-2xl shadow-lg border-l-4 border-[#c83e22] p-6 transform hover:scale-105 transition-all duration-300 hover:shadow-xl">
+              <div className="bg-white/30 rounded-2xl p-6 transform hover:scale-105 transition-all duration-300">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="p-3 bg-[#c83e22]/10 rounded-full">
                     <GiSpiderMask className="text-3xl text-[#c83e22]" />
@@ -217,32 +216,6 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-
-            {/* Bottom CTA */}
-            <div className="text-center mt-16">
-              <div className="bg-gradient-to-r from-[#ef4e2d]/15 to-[#ef4e2d]/25 backdrop-blur-sm rounded-3xl p-8 border-2 border-dashed border-[#ef4e2d]/40 shadow-lg">
-                <div className="flex justify-center mb-4">
-                  <div className="p-4 bg-[#ef4e2d] rounded-full">
-                    <LuFerrisWheel className="text-4xl text-white" />
-                  </div>
-                </div>
-                <h3 className="text-3xl font-bold text-[#ef4e2d] font-lilita mb-4 uppercase">
-                  Break The Cycle
-                </h3>
-                <p className="text-xl text-gray-700 font-nunito mb-6 max-w-2xl mx-auto">
-                  One spin ends the madness. No more debates, no more analysis
-                  paralysis. Just good food, chosen by fate.
-                </p>
-                <Link href="/spin">
-                  <Button
-                    size="lg"
-                    className="text-xl font-bold px-8 py-4 bg-[#ef4e2d] border-b-4 border-[#c83e22] font-league-spartan transition-all duration-300 uppercase rounded-2xl hover:bg-[#e03c24] hover:border-[#b32f1a] hover:scale-105 hover:cursor-pointer transform shadow-lg"
-                  >
-                    Just Spin Already
-                  </Button>
-                </Link>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -258,7 +231,7 @@ export default function HomePage() {
               </h2>
               {/* API Access Info */}
               <div className="mt-0">
-                <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/80 backdrop-blur-sm rounded-full border border-gray-200">
+                <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/80 rounded-full border border-gray-200">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                   <span className="text-sm font-medium text-gray-700">
                     <span className="font-semibold text-[#ef4e2d]">
@@ -327,7 +300,7 @@ export default function HomePage() {
               </div>
 
               {/* Demo Section */}
-              <div className="bg-white/80 rounded-3xl px-8 pt-4 pb-12 border-r-4 border-b-4 border-[#3d3d3d] overflow-hidden shadow-xl">
+              <div className="bg-white/80 rounded-3xl px-8 pt-4 pb-12 border-r-4 border-b-4 border-[#3d3d3d] overflow-hidden">
                 <div className="aspect-video rounded-2xl flex items-center justify-center">
                   <div className="relative text-center text-white space-y-4 w-full">
                     <h3 className="tracking-widest flex justify-center gap-2 text-2xl font-bold font-league-spartan text-[#3d3d3d] uppercase z-20">

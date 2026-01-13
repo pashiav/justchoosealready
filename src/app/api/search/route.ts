@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json()
     const { locationText, lat, lng, radiusMiles, cuisine, price, priceRanges } = body
-
+    
     console.log('Search API called with:', { locationText, lat, lng, radiusMiles, cuisine, price })
 
     // Validate required fields
